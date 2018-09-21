@@ -1,0 +1,6 @@
+.env
+db
+node_modules
+components/routes/_*
+unused_skills
+.idea
