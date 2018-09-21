@@ -1,5 +1,5 @@
 
-module.exports = function(controller, dialogflow) {
+module.exports = function(controller) {
 
     // Function to end all convos (prevent spillover contexts)
     function endExistingConvos(user) {

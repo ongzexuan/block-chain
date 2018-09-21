@@ -24,11 +24,6 @@ module.exports = function(controller) {
                     "type":"postback",
                     "title":"Check Status",
                     "payload":"check_status"
-                },
-                {
-                    "type":"postback",
-                    "title":"Give Feedback",
-                    "payload":"give_feedback"
                 }
             ]
         }]);

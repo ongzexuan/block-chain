@@ -62,10 +62,6 @@ var controller = Botkit.facebookbot({
     storage: mongoStorage
 });
 
-// Create dialogflow object
-const dialogflow = require('dialogflow');
-const dialogflowClient = new dialogflow.SessionsClient();
-
 // Ensures that Postback messages override current conversation context
 controller.excludeFromConversations('facebook_postback')
 
@@ -89,7 +85,7 @@ require('botkit-studio-metrics')(controller);
 
 var normalizedPath = require("path").join(__dirname, "skills");
 require("fs").readdirSync(normalizedPath).forEach(function(file) {
-  require("./skills/" + file)(controller, dialogflowClient);
+  require("./skills/" + file)(controller);
 });
 
 
