@@ -4,7 +4,7 @@ module.exports = function(controller) {
     // Postback button call by Facebook on initial interaction with page
     controller.hears(['get_started'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message!");
-
+        console.log(message.user);
         var attachment = {
             'type':'template',
             'payload':{

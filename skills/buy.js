@@ -25,6 +25,8 @@ module.exports = function(controller) {
     controller.hears(['buy_later'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message for buy_later!");
 
+
+
         bot.startConversation(message, function(err, convo) {
 
             // convo var defaults
@@ -161,7 +163,9 @@ module.exports = function(controller) {
     controller.hears(['buy_now'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message for buy_now!");
 
+
         bot.startConversation(message, function (err, convo) {
+
 
             // convo var defaults
             convo.setVar('start_time', '12:00pm');
@@ -181,6 +185,8 @@ module.exports = function(controller) {
                         checkPhoneNumber(convo.source_message.user, function(exists) {
                            if (!exists) {
                                convo.gotoThread('no_phone_number')
+                           } else {
+                               controller.trigger('try_match', [bot, message]);
                            }
                         });
                     }
@@ -226,7 +232,11 @@ module.exports = function(controller) {
                 text: 'Ok! We\'ve placed a buy order for you now! We\'ll keep you posted when we find a' +
                 ' match for you!',
                 action: 'completed'
-            }, 'success')
+            }, 'success');
+
+            // convo.successful({
+            //     bot.trigger('try_match', [bot, message]);
+            // });
 
         });
     });
