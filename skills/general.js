@@ -16,15 +16,18 @@ module.exports = function(controller) {
 
     }
 
-    controller.hears(['get_human_help'], 'facebook_postback', function(bot, message) {
-        console.log("Received request for get_human_help postback!");
-        endExistingConvos(message.user);
-        controller.studio.run(bot, 'get_human_help', message.user, message.channel, message).catch(function (err) {
-            if (err) {
-                controller.studio.run(bot, 'default_fallback', message.user, message.channel, message);
-                debug('Botkit Studio: ', err);
-            }
-        });
+    // Postback button call by Facebook on initial interaction with page
+    controller.hears(['get_started'], 'facebook_postback', function(bot, message) {
+        console.log("Received a get_started postback message!");
+
+        bot.startConversation
+
+        // controller.studio.run(bot, 'get_human_help', message.user, message.channel, message).catch(function (err) {
+        //     if (err) {
+        //         controller.studio.run(bot, 'default_fallback', message.user, message.channel, message);
+        //         debug('Botkit Studio: ', err);
+        //     }
+        // });
 
     });
 

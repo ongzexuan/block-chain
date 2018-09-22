@@ -18,7 +18,11 @@ This is a sample Facebook bot built with Botkit.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 var env = require('node-env-file');
-env(__dirname + '/.env');
+try {
+    env(__dirname + '/.env');
+} catch(err) {
+    console.log("Could not find .env file! Application running without .env")
+}
 
 
 if (!process.env.page_token) {
