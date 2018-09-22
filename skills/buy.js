@@ -26,10 +26,6 @@ module.exports = function(controller) {
                 }
             ], {}, 'default');
         });
-
-        bot.reply(message, {
-            attachment: attachment
-        });
     });
 
 };
