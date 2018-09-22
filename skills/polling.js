@@ -1,8 +1,5 @@
 
 module.exports = function(controller) {
-    var userid = '1901868523233034';
-    var userid2 = '2266808036727292';
-
     function try_match (cb) {
         var res = true;
         cb(res);

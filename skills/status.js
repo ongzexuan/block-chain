@@ -58,6 +58,11 @@ module.exports = function(controller) {
                                 'type':'postback',
                                 'payload':'sell_block',
                                 'title':'Sell'
+                            },
+                            {
+                                'type':'postback',
+                                'payload':'exit_gracefully',
+                                'title':'It\'s ok'
                             }
                         ]
                     }
@@ -87,7 +92,7 @@ module.exports = function(controller) {
     controller.hears(['exit_gracefully'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message for exit_gracefully!");
         bot.reply(message, {
-            text: 'Glad everything is alright!'
+            text: 'Ok, glad everything is alright!'
         });
     });
 };

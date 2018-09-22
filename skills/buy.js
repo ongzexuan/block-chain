@@ -186,6 +186,7 @@ module.exports = function(controller) {
                            if (!exists) {
                                convo.gotoThread('no_phone_number')
                            } else {
+
                                controller.trigger('try_match', [bot, message]);
                            }
                         });
@@ -233,10 +234,6 @@ module.exports = function(controller) {
                 ' match for you!',
                 action: 'completed'
             }, 'success');
-
-            // convo.successful({
-            //     bot.trigger('try_match', [bot, message]);
-            // });
 
         });
     });
