@@ -68,14 +68,14 @@ module.exports = function(db) {
             });
         },
 
-        addBuyOrder: function (user, tx_time) {
+        addBuyOrder: function (user, tx_time_start, tx_time_end) {
             var order = {
                 id: user.id,
                 type: "BUY",
                 user_id: user.id,
                 created_at: new Date(),
-                transaction_dt_start: moment(tx_time, "h:mma").toDate(),
-                transaction_dt_end: moment(tx_time, "h:mma").add(30, "m").toDate(),
+                transaction_dt_start: tx_time_start == null ? moment() : moment(tx_time_start, "h:mma").toDate(),
+                transaction_dt_end: tx_time_end == null ? moment().add(30, "m") : moment(tx_time_end, "h:mma").toDate(),
                 fulfilled: false,
                 matched_order_id: null
             }
@@ -91,8 +91,8 @@ module.exports = function(db) {
                 type: "SELL",
                 user_id: user.id,
                 created_at: new Date(),
-                transaction_dt_start: moment(tx_time_start, "h:mma").toDate(),
-                transaction_dt_end: moment(tx_time_end, "h:mma").toDate(),
+                transaction_dt_start: tx_time_start == null ? moment() : moment(tx_time_start, "h:mma").toDate(),
+                transaction_dt_end: tx_time_end == null ? moment().add(30, "m") : moment(tx_time_end, "h:mma").toDate(),
                 fulfilled: false,
                 matched_order_id: null
             }

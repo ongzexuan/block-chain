@@ -178,8 +178,8 @@ module.exports = function(controller) {
 
 
             // convo var defaults
-            convo.setVar('start_time', '12:00pm');
-            convo.setVar('end_time', '1:00pm');
+            // convo.setVar('start_time', '12:00pm');
+            // convo.setVar('end_time', '1:00pm');
             convo.setVar('phone_number', '1234567890');
 
             convo.addMessage({
@@ -196,7 +196,7 @@ module.exports = function(controller) {
                            if (ret.phoneNumber == null) {
                                convo.gotoThread('no_phone_number')
                            } else {
-                               matching.addBuyOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
+                               matching.addBuyOrder(ret, null, null).then(
                                    (order) => controller.trigger('try_match', [bot, message, order])
                                );
                                next();
