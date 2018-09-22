@@ -31,7 +31,7 @@ module.exports = function(controller) {
                 }
             ], {}, 'default');
 
-            convo.addQuestion('Please enter the end time in the same format: 10:30am', [
+            convo.addQuestion('Ok! Please also enter the end time in the same format: 10:30am', [
                 {
                     pattern: '^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9][ap]m$',
                     callback: function(res, convo) {
