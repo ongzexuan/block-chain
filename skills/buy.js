@@ -14,6 +14,9 @@ module.exports = function(controller) {
                     pattern: '^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9][ap]m$',
                     callback: function(res, convo) {
                         convo.say('You gave a valid datetime string');
+
+                        // TODO: Update Database with new start time
+                        convo.gotoThread('end_time');
                         convo.next();
                     }
                 },
@@ -22,11 +25,32 @@ module.exports = function(controller) {
                     callback: function(res, convo) {
                         convo.say('I\'m sorry I can\'t read that. Please enter the time in the following format:' +
                             ' 10:30am');
-                        convo.repeat();
+                        convo.gotoThread('default');
                         convo.next();
                     }
                 }
             ], {}, 'default');
+
+            convo.addQuestion('Please enter the end time in the same format: 10:30am', [
+                {
+                    pattern: '^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9][ap]m$',
+                    callback: function(res, convo) {
+                        convo.say('You also gave a valid datetime string');
+
+                        // TODO: Update Database with new end time
+                        convo.next();
+                    }
+                },
+                {
+                    default: true,
+                    callback: function(res, convo) {
+                        convo.say('I\'m sorry I can\'t read that. Please enter the time in the following format:' +
+                            ' 10:30am');
+                        convo.gotoThread('end_time');
+                        convo.next();
+                    }
+                }
+            ], {}, 'end_time');
         });
     });
 
