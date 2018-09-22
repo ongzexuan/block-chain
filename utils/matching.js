@@ -1,9 +1,9 @@
 var moment = require("moment")
 
-module.exports = function() {
+module.exports = function(db) {
 
     return {
-        userAccess: function (db, id, firstName, lastName, gender) {
+        userAccess: function (id, firstName, lastName, gender) {
             return db.user.get(id).then(user => {
                 if (user == null) {
                     console.log(`No user with id "${user.id}", creating...`)
@@ -19,7 +19,7 @@ module.exports = function() {
             });
         },
 
-        checkExistingOrder: function (db, user) {
+        checkExistingOrder: function (user) {
             return db.user.get(user.id).then(user => {
                 if (user == null) {
                     console.warn(`Warning from checkExistingOrder: No user with id "${user.id}"`)
@@ -32,7 +32,7 @@ module.exports = function() {
             });
         },
 
-        updatePhoneNumber: function(db, user, phoneNumber) {
+        updatePhoneNumber: function(user, phoneNumber) {
             return db.user.get(user.id).then(user => {
                 if (user == null) {
                     console.warn(`Warning from updatePhoneNumber: No user with id "${user.id}"`)
@@ -42,13 +42,14 @@ module.exports = function() {
             });
         },
 
-        addBuyOrder: function (db, user, tx_time) {
+        addBuyOrder: function (user, tx_time) {
             var order = {
                 id: user.id,
                 type: "BUY",
                 user_id: user.id,
                 created_at: new Date(),
                 transaction_dt_start: moment(tx_time).toDate(),
+                transaction_dt_end: moment(tx_time).add(30, "m").toDate(),
                 fulfilled: false,
                 matched_order_id: null
             }
@@ -58,7 +59,7 @@ module.exports = function() {
             return db.order.save(order);
         },
 
-        addSellOrder: function (db, user, tx_time_start, tx_time_end) {
+        addSellOrder: function (user, tx_time_start, tx_time_end) {
             var order = {
                 id: user.id,
                 type: "SELL",
@@ -75,7 +76,7 @@ module.exports = function() {
             return db.order.save(order);
         },
 
-        findMatch: function (db, order) {
+        findMatch: function (order) {
             if (order.type == "BUY") {
                 var sellOrders = db.order.find({
                     type: "SELL",
@@ -102,7 +103,7 @@ module.exports = function() {
 
                 return sellOrders
                     .then(orders => orders.sort((o1, o2) => o1.created_at - o2.created_at))
-                    .then(sortedOrders => sortedOrders.length == 0 ? null : sortedOrders[1]);
+                    .then(sortedOrders => sortedOrders.length == 0 ? null : sortedOrders[0]);
             }
         },
 
