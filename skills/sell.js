@@ -137,10 +137,14 @@ module.exports = function(controller) {
                     callback: function (res, convo) {
                         // TODO: Update Database with new end time
                         matching.userAccess(convo.source_message.user).then(
-                            (u) => matching.updatePhoneNumber(u, convo.extractResponse('text'))
+                            (u) => {
+                                console.log('attempting update');
+                                matching.updatePhoneNumber(u, convo.extractResponse('text'))
+                            }
                         ).then(
                             () => {
                                 convo.setVar('phone_number', convo.extractResponse('text'));
+                                console.log('new phone num set');
                                 convo.gotoThread('good_phone_number');
                             }
                         );
@@ -191,7 +195,7 @@ module.exports = function(controller) {
                         convo.gotoThread('order_already_exists');
                     } else {
                         checkPhoneNumber(convo.source_message.user, function(ret) {
-                            if (!exists) {
+                            if (ret.phoneNumber == null) {
                                 convo.gotoThread('no_phone_number')
                             } else {
                                 matching.addSellOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
@@ -226,8 +230,19 @@ module.exports = function(controller) {
                     pattern: '^[0-9]{10}$',
                     callback: function (res, convo) {
                         // TODO: Update Database with new end time
-                        convo.setVar('phone_number', convo.extractResponse('text'));
-                        convo.gotoThread('good_phone_number');
+                        matching.userAccess(convo.source_message.user).then(
+                            (u) => {
+                                console.log('attempting update');
+                                matching.updatePhoneNumber(u, convo.extractResponse('text'))
+                            }
+                        ).then(
+                            () => {
+                                convo.setVar('phone_number', convo.extractResponse('text'));
+                                console.log('new phone num set');
+                                convo.gotoThread('good_phone_number');
+                            }
+                        );
+
                     }
                 },
                 {
