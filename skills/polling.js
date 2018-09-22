@@ -1,11 +1,6 @@
 module.exports = function(controller) {
     var matching = require("../utils/matching")(controller.storage);
 
-    // function try_match (cb) {
-    //     var res = true;
-    //     cb(res);
-    // }
-
     controller.on('try_match', function(bot, message, order) {
         matching.findMatch(order).then(
             (matched) => {
@@ -29,21 +24,6 @@ module.exports = function(controller) {
                 }
             }
         );
-
-        // try_match(function(order) {
-        //     if (res) {
-        //         bot.say({
-        //             text: 'hi',
-        //             channel: res[0]
-        //         });
-        //         bot.say({
-        //             text: 'hi',
-        //             channel: res[1]
-        //         });
-        //     } else {
-        //         //Else ignore
-        //     }
-        // })
     });
 
 };

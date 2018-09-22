@@ -12,8 +12,15 @@ module.exports = function(controller) {
 
     // Check if user has existing order
     function cancelOrder (user, cb) {
-        let err = false; //TODO: Change
-        cb(err);
+        matching.checkExistingOrder(user).then(
+            (order) => matching.cancelOrder(order).then(
+                () => cb(false)
+            )
+        );
+
+        // matching.cancelOrder(order).then(
+        //     () =>  cb(err);
+        // );
     };
 
     // check status
@@ -30,7 +37,7 @@ module.exports = function(controller) {
                         'buttons': [
                             {
                                 'type':'postback',
-                                'payload':'cancel',
+                                'payload':'cancel_order',
                                 'title':'Cancel'
                             },
                             {
@@ -73,7 +80,7 @@ module.exports = function(controller) {
         });
     });
 
-    // exit gracefully
+    // cancel order
     controller.hears(['cancel_order'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message for cancel_order!");
         cancelOrder(message.user, function(err) {
