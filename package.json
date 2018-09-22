@@ -11,7 +11,7 @@
     "botkit": "^0.6.12",
     "botkit-middleware-dialogflow": "^1.4.1",
     "botkit-middleware-witai": "0.0.2",
-    "botkit-storage-mongo": "^1.0.7",
+    "botkit-storage-mongo": "git+https://github.com/howdyai/botkit-storage-mongo.git",
     "botkit-studio-metrics": "^0.0.1",
     "debug": "^2.6.0",
     "dialogflow": "^0.5.0",

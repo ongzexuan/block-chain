@@ -32,6 +32,32 @@ module.exports = function(db) {
             });
         },
 
+        cancelOrder: function cancelOrder (order) {
+            if (order == null) {
+                console.warn(`Warning from cancelOrder: Tried to cancel null order`);
+                return null;
+            }
+            else if (order.fulfilled) {
+                console.warn(`Warning from cancelOrder: Cancelling a fulfilled order:`);
+                console.log(order);
+            }
+
+            let matched_order_id = order.matched_order_id;
+            var resultPromises = [];
+            if (matched_order_id != null) {
+                resultPromises.push(db.order.get(matched_order_id)
+                    .then(matchedOrder => {
+                        // Should be pointing back, so drop it
+                        matchedOrder.matched_order_id = null;
+                        return cancelOrder(matchedOrder);
+                    }));
+            }
+
+            resultPromises.push(db.order.delete(order.id));
+
+            return Promise.all(resultPromises);
+        },
+
         updatePhoneNumber: function(user, phoneNumber) {
             return db.user.get(user.id).then(user => {
                 if (user == null) {
