@@ -23,7 +23,7 @@ module.exports = function(controller) {
                     },
                     {
                         'type':'postback',
-                        'payload':'get_status',
+                        'payload':'check_status',
                         'title':'Check Status'
                     }
                 ]
