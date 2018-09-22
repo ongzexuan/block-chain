@@ -6,7 +6,7 @@ module.exports = function(db) {
         userAccess: function (id, firstName, lastName, gender) {
             return db.user.get(id).then(user => {
                 if (user == null) {
-                    console.log(`No user with id "${user.id}", creating...`)
+                    console.log(`No user with id "${id}", creating...`)
                     return db.user.save({
                         id,
                         firstName,
@@ -77,34 +77,36 @@ module.exports = function(db) {
         },
 
         findMatch: function (order) {
-            if (order.type == "BUY") {
-                var sellOrders = db.order.find({
-                    type: "SELL",
-                    $or: [
-                        {$and: [
-                            {transaction_dt_end: {$gte: order.transaction_dt_start}},
-                            {transaction_dt_end: {$lte: order.transaction_dt_end}},
-                        ]},
-                        {$and: [
-                            {transaction_dt_start: {$gte: order.transaction_dt_start}},
-                            {transaction_dt_end: {$lte: order.transaction_dt_end}},
-                        ]},
-                        {$and: [
-                            {transaction_dt_start: {$gte: order.transaction_dt_start}},
-                            {transaction_dt_start: {$lte: order.transaction_dt_end}},
-                        ]},
-                        {$and: [
-                            {transaction_dt_start: {$lte: order.transaction_dt_start}},
-                            {transaction_dt_end: {$gte: order.transaction_dt_end}}
-                        ]}
-                    ],
-                    fulfilled: false
-                });
+            var targetType = "NONE";
+            if (order.type == "BUY") targetType = "SELL";
+            if (order.type == "SELL") targetType = "BUY";
 
-                return sellOrders
-                    .then(orders => orders.sort((o1, o2) => o1.created_at - o2.created_at))
-                    .then(sortedOrders => sortedOrders.length == 0 ? null : sortedOrders[0]);
-            }
+            var matchOrders = db.order.find({
+                type: targetType,
+                $or: [
+                    {$and: [
+                        {transaction_dt_end: {$gte: order.transaction_dt_start}},
+                        {transaction_dt_end: {$lte: order.transaction_dt_end}},
+                    ]},
+                    {$and: [
+                        {transaction_dt_start: {$gte: order.transaction_dt_start}},
+                        {transaction_dt_end: {$lte: order.transaction_dt_end}},
+                    ]},
+                    {$and: [
+                        {transaction_dt_start: {$gte: order.transaction_dt_start}},
+                        {transaction_dt_start: {$lte: order.transaction_dt_end}},
+                    ]},
+                    {$and: [
+                        {transaction_dt_start: {$lte: order.transaction_dt_start}},
+                        {transaction_dt_end: {$gte: order.transaction_dt_end}}
+                    ]}
+                ],
+                fulfilled: false
+            });
+
+            return matchOrders
+                .then(orders => orders.sort((o1, o2) => o1.created_at - o2.created_at))
+                .then(sortedOrders => sortedOrders.length == 0 ? null : sortedOrders[0]);
         },
 
         fulfillBuySell: function (buyOrder, sellOrder) {
