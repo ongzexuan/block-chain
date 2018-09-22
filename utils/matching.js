@@ -6,6 +6,7 @@ module.exports = function() {
         userAccess: function (db, id, firstName, lastName, gender) {
             return db.user.get(id).then(user => {
                 if (user == null) {
+                    console.log(`No user with id "${user.id}", creating...`)
                     return db.user.save({
                         id,
                         firstName,
@@ -21,13 +22,23 @@ module.exports = function() {
         checkExistingOrder: function (db, user) {
             return db.user.get(user.id).then(user => {
                 if (user == null) {
-                    console.warn(`Warning from checkExistingOrder: No user with id ${user.id}`)
+                    console.warn(`Warning from checkExistingOrder: No user with id "${user.id}"`)
                     return null;
                 }
                 return db.order.find({
                     user_id: user.id,
                     fulfilled: false,
                 }).then(orders => orders.length == 0 ? null : orders[0]);
+            });
+        },
+
+        updatePhoneNumber: function(db, user, phoneNumber) {
+            return db.user.get(user.id).then(user => {
+                if (user == null) {
+                    console.warn(`Warning from updatePhoneNumber: No user with id "${user.id}"`)
+                    return null;
+                }
+                return db.user.save({...user, phoneNumber});
             });
         },
 
@@ -39,14 +50,12 @@ module.exports = function() {
                 created_at: new Date(),
                 transaction_dt_start: moment(tx_time).toDate(),
                 fulfilled: false,
-                matched_order: null
+                matched_order_id: null
             }
 
             // TODO: Check if user exists
 
-            db.order.save(order);
-
-            return order;
+            return db.order.save(order);
         },
 
         addSellOrder: function (db, user, tx_time_start, tx_time_end) {
@@ -58,14 +67,12 @@ module.exports = function() {
                 transaction_dt_start: tx_time_start.toDate(),
                 transaction_dt_end: tx_time_end.toDate(),
                 fulfilled: false,
-                matched_order: null
+                matched_order_id: null
             }
 
             // TODO: Check if user exists
 
-            db.order.save(order);
-
-            return order;
+            return db.order.save(order);
         },
 
         findMatch: function (db, order) {
@@ -90,13 +97,26 @@ module.exports = function() {
                             {transaction_dt_end: {$gte: order.transaction_dt_end}}
                         ]}
                     ],
-                    fulfilled: {$ne: true}
+                    fulfilled: false
                 });
 
                 return sellOrders
                     .then(orders => orders.sort((o1, o2) => o1.created_at - o2.created_at))
                     .then(sortedOrders => sortedOrders.length == 0 ? null : sortedOrders[1]);
             }
+        },
+
+        fulfillBuySell: function (buyOrder, sellOrder) {
+            buyOrder.matched_order_id = sellOrder.id;
+            sellOrder.matched_order_id = buyOrder.id;
+
+            buyOrder.fulfilled = true;
+            sellOrder.fulfilled = true;
+
+            return Promise.all([
+                db.order.save(buyOrder),
+                db.order.save(sellOrder)
+            ]);
         }
     };
 }
