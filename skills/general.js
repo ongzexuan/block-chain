@@ -20,14 +20,35 @@ module.exports = function(controller) {
     controller.hears(['get_started'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message!");
 
-        bot.reply(message, "Hi");
+        var attachment = {
+            'type':'template',
+            'payload':{
+                'template_type':'button',
+                'text': 'Hi! Would you like to buy or sell or block today?',
+                'buttons': [
+                    {
+                        'type':'postback',
+                        'payload':'buy_block',
+                        'title':'Buy'
+                    },
+                    {
+                        'type':'postback',
+                        'payload':'sell_block',
+                        'title':'Sell'
+                    },
+                    {
+                        'type':'postback',
+                        'payload':'get_status',
+                        'title':'Check Status'
+                    }
+                ]
+            }
+        };
 
-        // controller.studio.run(bot, 'get_human_help', message.user, message.channel, message).catch(function (err) {
-        //     if (err) {
-        //         controller.studio.run(bot, 'default_fallback', message.user, message.channel, message);
-        //         debug('Botkit Studio: ', err);
-        //     }
-        // });
+        bot.reply(message, {
+            attachment: attachment
+        });
+
 
     });
 
