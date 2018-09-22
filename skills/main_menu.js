@@ -59,4 +59,13 @@ module.exports = function(controller) {
         });
     });
 
+    // check_status
+    controller.hears(['check_status'], 'facebook_postback', function(bot, message) {
+        console.log("Received a get_started postback message for check_status!");
+
+        bot.reply(message, {
+            text: 'Checking your current buy/sell status... [DEBUG] Not actually checking haha'
+        });
+    });
+
 };
