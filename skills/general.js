@@ -20,7 +20,7 @@ module.exports = function(controller) {
     controller.hears(['get_started'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message!");
 
-        bot.startConversation
+        bot.reply(message, "Hi");
 
         // controller.studio.run(bot, 'get_human_help', message.user, message.channel, message).catch(function (err) {
         //     if (err) {
