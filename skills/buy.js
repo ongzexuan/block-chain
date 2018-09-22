@@ -25,6 +25,7 @@ module.exports = function(controller) {
                     callback: function(res, convo) {
                         convo.sayFirst('I\'m sorry I can\'t read that. Please enter the time in the following format:' +
                             ' 10:30am');
+                        convo.next();
                         convo.gotoThread('default');
                         convo.next();
                     }
@@ -46,6 +47,7 @@ module.exports = function(controller) {
                     callback: function(res, convo) {
                         convo.sayFirst('I\'m sorry I can\'t read that. Please enter the time in the following format:' +
                             ' 10:30am');
+                        convo.next();
                         convo.gotoThread('end_time');
                         convo.next();
                     }
