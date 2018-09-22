@@ -16,6 +16,7 @@
     "debug": "^2.6.0",
     "dialogflow": "^0.5.0",
     "express": "^4.14.0",
+    "moment": "^2.22.2",
     "mongoose": "^5.1.7",
     "node-env-file": "^0.1.8",
     "request": "^2.79.0",
