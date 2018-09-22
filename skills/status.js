@@ -1,14 +1,13 @@
 
 module.exports = function(controller) {
 
+    var matching = require("../utils/matching")(controller.storage);
+
     // Check if user has existing order
     function checkExistingOrder (user, cb) {
-        let exists = false; //TODO: Change
-        if (exists) {
-            cb(true);
-        } else {
-            cb(false);
-        }
+        matching.checkExistingOrder(user).then(
+            cb
+        );
     };
 
     // Check if user has existing order
@@ -20,9 +19,9 @@ module.exports = function(controller) {
     // check status
     controller.hears(['check_status'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message for check_status!");
-        checkExistingOrder(message.user, function(exists) {
+        checkExistingOrder(message.user, function(order) {
             var attachment = null;
-            if (exists) {
+            if (order != null) {
                 attachment = {
                     'type':'template',
                     'payload':{
@@ -75,8 +74,8 @@ module.exports = function(controller) {
     });
 
     // exit gracefully
-    controller.hears(['exit_gracefully'], 'facebook_postback', function(bot, message) {
-        console.log("Received a get_started postback message for exit_gracefully!");
+    controller.hears(['cancel_order'], 'facebook_postback', function(bot, message) {
+        console.log("Received a get_started postback message for cancel_order!");
         cancelOrder(message.user, function(err) {
             if (!err) {
                 bot.reply(message, {

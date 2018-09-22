@@ -19,14 +19,14 @@ module.exports = function(db) {
             });
         },
 
-        checkExistingOrder: function (user) {
-            return db.user.get(user.id).then(user => {
+        checkExistingOrder: function (userid) {
+            return db.user.get(userid).then(user => {
                 if (user == null) {
-                    console.warn(`Warning from checkExistingOrder: No user with id "${user.id}"`)
+                    console.warn(`Warning from checkExistingOrder: No user with id "${userid}"`)
                     return null;
                 }
                 return db.order.find({
-                    user_id: user.id,
+                    user_id: userid,
                     fulfilled: false,
                 }).then(orders => orders.length == 0 ? null : orders[0]);
             });
@@ -48,8 +48,8 @@ module.exports = function(db) {
                 type: "BUY",
                 user_id: user.id,
                 created_at: new Date(),
-                transaction_dt_start: moment(tx_time).toDate(),
-                transaction_dt_end: moment(tx_time).add(30, "m").toDate(),
+                transaction_dt_start: moment(tx_time, "h:mma").toDate(),
+                transaction_dt_end: moment(tx_time, "h:mma").add(30, "m").toDate(),
                 fulfilled: false,
                 matched_order_id: null
             }
@@ -65,8 +65,8 @@ module.exports = function(db) {
                 type: "SELL",
                 user_id: user.id,
                 created_at: new Date(),
-                transaction_dt_start: tx_time_start.toDate(),
-                transaction_dt_end: tx_time_end.toDate(),
+                transaction_dt_start: moment(tx_time_start, "h:mma").toDate(),
+                transaction_dt_end: moment(tx_time_end, "h:mma").toDate(),
                 fulfilled: false,
                 matched_order_id: null
             }

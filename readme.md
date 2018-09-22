@@ -1,6 +1,6 @@
 # Block Chain
 
-Some content
+Block Chain is a Facebook Messenger bot to match students 
 
 # About Botkit
 

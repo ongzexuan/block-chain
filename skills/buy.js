@@ -1,31 +1,38 @@
-
 module.exports = function(controller) {
+
+    var matching = require("../utils/matching")(controller.storage);
 
     // Check if phone number exists
     function checkPhoneNumber (user, cb) {
-        let exists = false; //TODO: Change
-        if (exists) {
-            cb(true);
-        } else {
-            cb(false);
-        }
+        matching.userAccess(user, "John", "Smith", "M").then(
+            cb
+        );
+
+        // let exists = false; //TODO: Change
+        // if (exists) {
+        //     cb(user, true);
+        // } else {
+        //     cb(false);
+        // }
     };
 
     // Check if user has existing order
     function checkExistingOrder (user, cb) {
-        let exists = false; //TODO: Change
-        if (exists) {
-            cb(true);
-        } else {
-            cb(false);
-        }
+        matching.checkExistingOrder(user).then(
+            cb
+        );
+
+        // let exists = false; //TODO: Change
+        // if (exists) {
+        //     cb(true);
+        // } else {
+        //     cb(false);
+        // }
     };
 
     // buy_block later
     controller.hears(['buy_later'], 'facebook_postback', function(bot, message) {
         console.log("Received a get_started postback message for buy_later!");
-
-
 
         bot.startConversation(message, function(err, convo) {
 
@@ -40,11 +47,13 @@ module.exports = function(controller) {
                 action: 'start_time'
             }, 'default');
 
-            convo.beforeThread('success', function (convo, next) {
+            convo.beforeThread('start_time', function (convo, next) {
                 console.log('before thread')
-                checkExistingOrder(convo.source_message.user, function (exists) {
-                    if (exists) {
+                checkExistingOrder(convo.source_message.user, function (order) {
+                    if (order != null) {
                         convo.gotoThread('order_already_exists')
+                    } else {
+                        next();
                     }
                 });
             });
@@ -114,9 +123,14 @@ module.exports = function(controller) {
 
             // Check phone number
             convo.beforeThread('success', function (convo, next) {
-                checkPhoneNumber(convo.source_message.user, function (exists) {
-                    if (!exists) {
+                checkPhoneNumber(convo.source_message.user, function (ret) {
+                    if (ret.phoneNumber == null) {
                         convo.gotoThread('no_phone_number');
+                    } else {
+                        matching.addBuyOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
+                            (order) => controller.trigger('try_match', [bot, message, order])
+                        );
+                        next();
                     }
                 });
             });
@@ -137,8 +151,15 @@ module.exports = function(controller) {
                     pattern: '^[0-9]{10}$',
                     callback: function (res, convo) {
                         // TODO: Update Database with new end time
-                        convo.setVar('phone_number', convo.extractResponse('text'));
-                        convo.gotoThread('good_phone_number');
+                        matching.userAccess(convo.source_message.user).then(
+                            (u) => matching.updatePhoneNumber(u, convo.extractResponse('text'))
+                        ).then(
+                            () => {
+                                convo.setVar('phone_number', convo.extractResponse('text'));
+                                convo.gotoThread('good_phone_number');
+                            }
+                        );
+
                     }
                 },
                 {
@@ -151,7 +172,9 @@ module.exports = function(controller) {
 
             // Success confirmation
             convo.addMessage({
-                text: 'Ok! We\'ve placed a buy order for you at 10:30am today! We\'ll keep you posted when we find a' +
+                text: 'Ok! We\'ve placed a buy order for you at {{vars.end_time}} today! We\'ll keep you posted when' +
+                ' we find' +
+                ' a' +
                 ' match for you!',
                 action: 'completed'
             }, 'success');
@@ -178,6 +201,9 @@ module.exports = function(controller) {
             }, 'default');
 
             convo.beforeThread('success', function (convo, next) {
+                console.log('before success');
+
+
                 checkExistingOrder(convo.source_message.user, function (exists) {
                     if (exists) {
                         convo.gotoThread('order_already_exists');
