@@ -9,7 +9,7 @@ module.exports = function(controller) {
         // 1. Check if there exists an existing order, if so reject
 
         bot.startConversation(message, function(err, convo) {
-            convo.addQuestion('Please enter the time in the following format: 10:30am', [
+            convo.addQuestion('Please enter the start time in the following format: 10:30am', [
                 {
                     pattern: '^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9][ap]m$',
                     callback: function(res, convo) {
@@ -20,6 +20,8 @@ module.exports = function(controller) {
                 {
                     default: true,
                     callback: function(res, convo) {
+                        convo.say('I\'m sorry I can\'t read that. Please enter the time in the following format:' +
+                            ' 10:30am');
                         convo.repeat();
                         convo.next();
                     }
