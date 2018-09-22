@@ -16,9 +16,9 @@ module.exports = function(controller) {
         );
     };
 
-    // buy_block later
-    controller.hears(['buy_later'], 'facebook_postback', function(bot, message) {
-        console.log("Received a get_started postback message for buy_later!");
+    // sell_block later
+    controller.hears(['sell_later'], 'facebook_postback', function(bot, message) {
+        console.log("Received a get_started postback message for sell_later!");
 
         bot.startConversation(message, function(err, convo) {
 
@@ -29,12 +29,11 @@ module.exports = function(controller) {
 
             // Get start time
             convo.addMessage({
-                text: 'Buying a block later, ok!',
+                text: 'Selling a block later, ok!',
                 action: 'start_time'
             }, 'default');
 
             convo.beforeThread('start_time', function (convo, next) {
-                console.log('before thread')
                 checkExistingOrder(convo.source_message.user, function (order) {
                     if (order != null) {
                         convo.gotoThread('order_already_exists')
@@ -113,7 +112,7 @@ module.exports = function(controller) {
                     if (ret.phoneNumber == null) {
                         convo.gotoThread('no_phone_number');
                     } else {
-                        matching.addBuyOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
+                        matching.addSellOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
                             (order) => controller.trigger('try_match', [bot, message, order])
                         );
                         next();
@@ -158,7 +157,7 @@ module.exports = function(controller) {
 
             // Success confirmation
             convo.addMessage({
-                text: 'Ok! We\'ve placed a buy order for you at {{vars.end_time}} today! We\'ll keep you posted when' +
+                text: 'Ok! We\'ve placed a sell order for you at {{vars.end_time}} today! We\'ll keep you posted when' +
                 ' we find' +
                 ' a' +
                 ' match for you!',
@@ -168,9 +167,9 @@ module.exports = function(controller) {
     });
 
 
-    // buy_block now
-    controller.hears(['buy_now'], 'facebook_postback', function(bot, message) {
-        console.log("Received a get_started postback message for buy_now!");
+    // sell_block now
+    controller.hears(['sell_now'], 'facebook_postback', function(bot, message) {
+        console.log("Received a get_started postback message for sell_now!");
 
 
         bot.startConversation(message, function (err, convo) {
@@ -182,7 +181,7 @@ module.exports = function(controller) {
             convo.setVar('phone_number', '1234567890');
 
             convo.addMessage({
-                text: 'Buying a block now, ok!',
+                text: 'Selling a block now, ok!',
                 action: 'success'
             }, 'default');
 
@@ -192,14 +191,14 @@ module.exports = function(controller) {
                         convo.gotoThread('order_already_exists');
                     } else {
                         checkPhoneNumber(convo.source_message.user, function(ret) {
-                           if (!exists) {
-                               convo.gotoThread('no_phone_number')
-                           } else {
-                               matching.addBuyOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
-                                   (order) => controller.trigger('try_match', [bot, message, order])
-                               );
-                               next();
-                           }
+                            if (!exists) {
+                                convo.gotoThread('no_phone_number')
+                            } else {
+                                matching.addSellOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
+                                    (order) => controller.trigger('try_match', [bot, message, order])
+                                );
+                                next();
+                            }
                         });
                     }
                 });
@@ -241,7 +240,7 @@ module.exports = function(controller) {
 
             // Success confirmation
             convo.addMessage({
-                text: 'Ok! We\'ve placed a buy order for you now! We\'ll keep you posted when we find a' +
+                text: 'Ok! We\'ve placed a sell order for you now! We\'ll keep you posted when we find a' +
                 ' match for you!',
                 action: 'completed'
             }, 'success');
