@@ -52,7 +52,12 @@ if (!process.env.MONGODB_URI) {
 
 var Botkit = require('botkit');
 var debug = require('debug')('botkit:main');
-var mongoStorage = require('botkit-storage-mongo')({mongoUri: process.env.MONGODB_URI})
+var mongoStorage = require('botkit-storage-mongo')({
+    mongoUri: process.env.MONGODB_URI,
+    tables: [
+        "user",
+        "order"
+    ]})
 
 
 // Create the Botkit controller, which controls all instances of the bot.
