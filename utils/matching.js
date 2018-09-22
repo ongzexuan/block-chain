@@ -74,8 +74,8 @@ module.exports = function(db) {
                 type: "BUY",
                 user_id: user.id,
                 created_at: new Date(),
-                transaction_dt_start: tx_time_start == null ? moment() : moment(tx_time_start, "h:mma").toDate(),
-                transaction_dt_end: tx_time_end == null ? moment().add(30, "m") : moment(tx_time_end, "h:mma").toDate(),
+                transaction_dt_start: tx_time_start == null ? moment().toDate() : moment(tx_time_start, "h:mma").toDate(),
+                transaction_dt_end: tx_time_end == null ? moment().add(30, "m").toDate() : moment(tx_time_end, "h:mma").toDate(),
                 fulfilled: false,
                 matched_order_id: null
             }
@@ -91,8 +91,8 @@ module.exports = function(db) {
                 type: "SELL",
                 user_id: user.id,
                 created_at: new Date(),
-                transaction_dt_start: tx_time_start == null ? moment() : moment(tx_time_start, "h:mma").toDate(),
-                transaction_dt_end: tx_time_end == null ? moment().add(30, "m") : moment(tx_time_end, "h:mma").toDate(),
+                transaction_dt_start: tx_time_start == null ? moment().toDate() : moment(tx_time_start, "h:mma").toDate(),
+                transaction_dt_end: tx_time_end == null ? moment().add(30, "m").toDate() : moment(tx_time_end, "h:mma").toDate(),
                 fulfilled: false,
                 matched_order_id: null
             }

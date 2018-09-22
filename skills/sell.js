@@ -67,7 +67,6 @@ module.exports = function(controller) {
                         // TODO: Update Database with new start time
                         convo.setVar('start_time', convo.extractResponse('text'));
                         convo.gotoThread('good_start_time');
-
                     }
                 },
                 {
@@ -94,6 +93,7 @@ module.exports = function(controller) {
                     pattern: '^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9][ap]m$',
                     callback: function (res, convo) {
                         // TODO: Update Database with new end time
+                        console.log('Received sell later time valid');
                         convo.setVar('end_time', convo.extractResponse('text'));
                         convo.gotoThread('good_end_time');
                     }
@@ -101,6 +101,7 @@ module.exports = function(controller) {
                 {
                     default: true,
                     callback: function (res, convo) {
+                        console.log('Received sell later time invalid');
                         convo.gotoThread('bad_end_time');
                     },
                 }
@@ -113,7 +114,7 @@ module.exports = function(controller) {
                         convo.gotoThread('no_phone_number');
                     } else {
                         matching.addSellOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
-                            (order) => controller.trigger('try_match', [bot, message, order])
+                            (order) => controller.trigger('try_match', [bot, message, order, convo])
                         );
                         next();
                     }
@@ -199,7 +200,7 @@ module.exports = function(controller) {
                                 convo.gotoThread('no_phone_number')
                             } else {
                                 matching.addSellOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
-                                    (order) => controller.trigger('try_match', [bot, message, order])
+                                    (order) => controller.trigger('try_match', [bot, message, order, convo])
                                 );
                                 next();
                             }

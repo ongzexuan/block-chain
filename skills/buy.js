@@ -113,7 +113,7 @@ module.exports = function(controller) {
                         convo.gotoThread('no_phone_number');
                     } else {
                         matching.addBuyOrder(ret, convo.vars.start_time, convo.vars.end_time).then(
-                            (order) => controller.trigger('try_match', [bot, message, order])
+                            (order) => controller.trigger('try_match', [bot, message, order, convo])
                         );
                         next();
                     }
@@ -197,7 +197,7 @@ module.exports = function(controller) {
                                convo.gotoThread('no_phone_number')
                            } else {
                                matching.addBuyOrder(ret, null, null).then(
-                                   (order) => controller.trigger('try_match', [bot, message, order])
+                                   (order) => controller.trigger('try_match', [bot, message, order, convo])
                                );
                                next();
                            }
